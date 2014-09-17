@@ -8,7 +8,6 @@ class BggApi
     :family,
     :forum,
     :forumlist,
-    :guild,
     :thing,
     :thread,
     :user
@@ -16,6 +15,7 @@ class BggApi
 
   NEW_METHODS = [
     :collection,
+    :guild,
     :hot,
     :plays,
     :search
@@ -50,6 +50,7 @@ end
 
 require 'bgg/request/base'
 require 'bgg/request/collection'
+require 'bgg/request/guild'
 require 'bgg/request/hot'
 require 'bgg/request/plays'
 require 'bgg/request/search'
@@ -59,6 +60,7 @@ require 'bgg/result/enumerable'
 require 'bgg/result/collection'
 require 'bgg/result/collection_item'
 require 'bgg/result/collection_item_rank'
+require 'bgg/result/guild'
 require 'bgg/result/hot'
 require 'bgg/result/hot_item'
 require 'bgg/result/plays'
