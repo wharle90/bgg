@@ -65,13 +65,15 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Hot Items' do
+      let(:item_id) { 8 }
       let(:query) { {type: 'boardgame'} }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/hot' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/></items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item id='#{item_id}'/></items>" }
 
       subject { BggApi.hot query }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Hot }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Plays' do
