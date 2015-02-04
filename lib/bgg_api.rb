@@ -68,6 +68,8 @@ require 'bgg/result/plays'
 require 'bgg/result/plays_play'
 require 'bgg/result/search'
 require 'bgg/result/search_item'
+require 'bgg/result/top'
+require 'bgg/result/top_item'
 require 'bgg/result/user'
 
 require 'bgg/game'

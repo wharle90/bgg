@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Bgg::Request::User do
   let(:query) { { name: username } }
-  let(:params) { nil }
-  let(:response_body) { '<?xml version="1.0" encoding="utf-8"?><items><item/><items>' }
+  let(:params) { {} }
+  let(:response_body) { '<?xml version="1.0" encoding="utf-8"?><user id="1"></user>' }
   let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
   let(:username) { 'abcdef' }
 
@@ -66,8 +66,8 @@ describe Bgg::Request::User do
   end
 
   describe '#page' do
-    let(:params) { { hot: 1 } }
-    let(:query) { { name: username, hot: 1, page: 2 } }
+    let(:params) { { buddies: 1 } }
+    let(:query) { { name: username, buddies: 1, page: 2 } }
 
     it do
       expect( subject.page(2) ).to be_instance_of Bgg::Request::User

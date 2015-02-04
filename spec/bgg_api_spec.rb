@@ -119,28 +119,22 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG User' do
+      let(:username) { 'texasjdl' }
+      let(:query) { { name: username } }
+      let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
+
       context 'who exists' do
-        let(:query) { {name: 'texasjdl'} }
-        let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
-        let(:response_file) { 'sample_data/user?name=texasjdl' }
+        let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><user id="1"></user>' }
 
-        subject(:results) { BggApi.user(query) }
+        subject { BggApi.user username }
 
-        it { should_not be_nil }
-
-        it 'has a yearregistered value' do
-          results['yearregistered'][0]['value'].should == '2004'
-        end
+        it { expect(subject).to be_instance_of Bgg::Result::User }
       end
 
       context 'who does not exist' do
-        let(:query) { {name: 'yyyyyyy'} }
-        let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
-        let(:response_file) { 'sample_data/user?name=yyyyyyy' }
+        let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><user id=""></user>' }
 
-        subject(:results) { BggApi.user(query) }
-
-        it { should raise_error }
+        it { expect{ BggApi.user username }.to raise_error ArgumentError }
       end
     end
   end
