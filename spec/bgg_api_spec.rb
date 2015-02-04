@@ -37,15 +37,17 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Collection' do
+      let(:item_id) { 7 }
       let(:username) { 'texasjdl' }
       let(:params) { {own: '1', type: 'boardgame'} }
       let(:query) { params.merge({ username: username }) }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/collection' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/><items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item objectid='#{item_id}'/><items>" }
 
       subject { BggApi.collection username, params }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Collection }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Guild' do
