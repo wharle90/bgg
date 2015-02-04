@@ -51,15 +51,17 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Guild' do
+      let(:name) { 'my_guild' }
       let(:id) { 1234 }
       let(:params) { { page: 2 } }
       let(:query) { params.merge({ id: id, members: 1 }) }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/guild' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><guild></guild>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><guild name='#{name}'></guild>" }
 
       subject { BggApi.guild id, params }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Guild }
+      it { expect( subject.name ).to eq name }
     end
 
     describe 'BGG Hot Items' do
