@@ -77,15 +77,17 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Plays' do
+      let(:count) { 10 }
       let(:thing_id) { 84876 }
       let(:username) { 'texasjd1' }
       let(:query) { { id: thing_id, username: username } }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/plays' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><plays><play/></plays>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><plays total='#{count}'><play/></plays>" }
 
       subject(:results) { BggApi.plays username, thing_id }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Plays }
+      it { expect( subject.total_count ).to eq count }
     end
 
     describe 'BGG Search' do
