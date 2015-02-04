@@ -91,15 +91,17 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Search' do
+      let(:item_id) { 9 }
       let(:search) { 'Marvel' }
       let(:params) { { query: search } }
       let(:query) { params }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/search' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/><items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item id='#{item_id}'/></items>" }
 
       subject { BggApi.search search }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Search }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Thing' do
