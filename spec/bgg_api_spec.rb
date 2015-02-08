@@ -48,6 +48,19 @@ describe 'BggApi basic API calls' do
       it { expect( subject ).to be_instance_of Bgg::Result::Collection }
     end
 
+    describe 'BGG Family' do
+      let(:type) { 'boardgamefamily' }
+      let(:id) { 1234 }
+      let(:query) { { id: id } }
+      let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/family' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item type='#{type}'/></items>" }
+
+      subject { BggApi.family id }
+
+      it { expect( subject ).to be_instance_of Bgg::Result::Family }
+      it { expect( subject.type ).to eq type }
+    end
+
     describe 'BGG Guild' do
       let(:id) { 1234 }
       let(:params) { { page: 2 } }

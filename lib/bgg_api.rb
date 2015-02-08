@@ -5,7 +5,6 @@ class BggApi
   include HTTParty
 
   OLD_METHODS = [
-    :family,
     :forum,
     :forumlist,
     :thing,
@@ -15,6 +14,7 @@ class BggApi
 
   NEW_METHODS = [
     :collection,
+    :family,
     :guild,
     :hot,
     :plays,
