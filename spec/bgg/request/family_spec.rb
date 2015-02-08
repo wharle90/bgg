@@ -29,7 +29,7 @@ describe Bgg::Request::Family do
 
       it do
         expect( subject ).to be_instance_of Bgg::Request::Family
-        #expect( subject.get ).to be_instance_of Bgg::Result::Family
+        expect( subject.get ).to be_instance_of Bgg::Result::Family
       end
     end
   end
