@@ -9,8 +9,7 @@ class BggApi
     :forum,
     :forumlist,
     :thing,
-    :thread,
-    :user
+    :thread
   ].freeze
 
   NEW_METHODS = [
@@ -18,7 +17,8 @@ class BggApi
     :guild,
     :hot,
     :plays,
-    :search
+    :search,
+    :user
   ].freeze
 
   BASE_URI = 'http://www.boardgamegeek.com/xmlapi2'
@@ -54,6 +54,7 @@ require 'bgg/request/guild'
 require 'bgg/request/hot'
 require 'bgg/request/plays'
 require 'bgg/request/search'
+require 'bgg/request/user'
 
 require 'bgg/result/item'
 require 'bgg/result/enumerable'
@@ -67,7 +68,7 @@ require 'bgg/result/plays'
 require 'bgg/result/plays_play'
 require 'bgg/result/search'
 require 'bgg/result/search_item'
+require 'bgg/result/user'
 
 require 'bgg/game'
-require 'bgg/user'
 

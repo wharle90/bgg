@@ -37,61 +37,71 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG Collection' do
+      let(:item_id) { 7 }
       let(:username) { 'texasjdl' }
       let(:params) { {own: '1', type: 'boardgame'} }
       let(:query) { params.merge({ username: username }) }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/collection' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/><items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item objectid='#{item_id}'/><items>" }
 
       subject { BggApi.collection username, params }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Collection }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Guild' do
+      let(:name) { 'my_guild' }
       let(:id) { 1234 }
       let(:params) { { page: 2 } }
       let(:query) { params.merge({ id: id, members: 1 }) }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/guild' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><guild></guild>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><guild name='#{name}'></guild>" }
 
       subject { BggApi.guild id, params }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Guild }
+      it { expect( subject.name ).to eq name }
     end
 
     describe 'BGG Hot Items' do
+      let(:item_id) { 8 }
       let(:query) { {type: 'boardgame'} }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/hot' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/></items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item id='#{item_id}'/></items>" }
 
       subject { BggApi.hot query }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Hot }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Plays' do
+      let(:count) { 10 }
       let(:thing_id) { 84876 }
       let(:username) { 'texasjd1' }
       let(:query) { { id: thing_id, username: username } }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/plays' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><plays><play/></plays>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><plays total='#{count}'><play/></plays>" }
 
       subject(:results) { BggApi.plays username, thing_id }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Plays }
+      it { expect( subject.total_count ).to eq count }
     end
 
     describe 'BGG Search' do
+      let(:item_id) { 9 }
       let(:search) { 'Marvel' }
       let(:params) { { query: search } }
       let(:query) { params }
       let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/search' }
-      let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><items><item/><items>' }
+      let(:expected_response) { "<?xml version='1.0' encoding='utf-8'?><items><item id='#{item_id}'/></items>" }
 
       subject { BggApi.search search }
 
       it { expect( subject ).to be_instance_of Bgg::Result::Search }
+      it { expect( subject.first.id ).to eq item_id }
     end
 
     describe 'BGG Thing' do
@@ -109,28 +119,22 @@ describe 'BggApi basic API calls' do
     end
 
     describe 'BGG User' do
+      let(:username) { 'texasjdl' }
+      let(:query) { { name: username } }
+      let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
+
       context 'who exists' do
-        let(:query) { {name: 'texasjdl'} }
-        let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
-        let(:response_file) { 'sample_data/user?name=texasjdl' }
+        let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><user id="1"></user>' }
 
-        subject(:results) { BggApi.user(query) }
+        subject { BggApi.user username }
 
-        it { should_not be_nil }
-
-        it 'has a yearregistered value' do
-          results['yearregistered'][0]['value'].should == '2004'
-        end
+        it { expect(subject).to be_instance_of Bgg::Result::User }
       end
 
       context 'who does not exist' do
-        let(:query) { {name: 'yyyyyyy'} }
-        let(:request_url) { 'http://www.boardgamegeek.com/xmlapi2/user' }
-        let(:response_file) { 'sample_data/user?name=yyyyyyy' }
+        let(:expected_response) { '<?xml version="1.0" encoding="utf-8"?><user id=""></user>' }
 
-        subject(:results) { BggApi.user(query) }
-
-        it { should raise_error }
+        it { expect{ BggApi.user username }.to raise_error ArgumentError }
       end
     end
   end
