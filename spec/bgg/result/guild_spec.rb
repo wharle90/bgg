@@ -6,7 +6,7 @@ describe Bgg::Result::Guild do
   let(:xml_string) { '<guild><members/></guild>' }
   let(:request) { double('Bgg::Request::Guild') }
 
-  subject { Bgg::Result::Guild.new(item_xml.at_xpath('guild'), request) }
+  subject { Bgg::Result::Guild.new(item_xml, request) }
 
   before do
     request.stub(:params).and_return(params)
