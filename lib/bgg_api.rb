@@ -5,7 +5,6 @@ class BggApi
   include HTTParty
 
   OLD_METHODS = [
-    :family,
     :forum,
     :forumlist,
     :thing,
@@ -14,6 +13,7 @@ class BggApi
 
   NEW_METHODS = [
     :collection,
+    :family,
     :guild,
     :hot,
     :plays,
@@ -50,6 +50,7 @@ end
 
 require 'bgg/request/base'
 require 'bgg/request/collection'
+require 'bgg/request/family'
 require 'bgg/request/guild'
 require 'bgg/request/hot'
 require 'bgg/request/plays'
@@ -61,6 +62,7 @@ require 'bgg/result/enumerable'
 require 'bgg/result/collection'
 require 'bgg/result/collection_item'
 require 'bgg/result/collection_item_rank'
+require 'bgg/result/family'
 require 'bgg/result/guild'
 require 'bgg/result/hot'
 require 'bgg/result/hot_item'
