@@ -5,7 +5,7 @@ module Bgg
                 :image, :max_players, :mechanics, :min_players,
                 :name, :names, :playing_time, :publishers,
                 :recommended_minimum_age, :thumbnail,
-                :year_published
+                :year_published, :game_data
 
     def initialize(game_data)
       @game_data = game_data
