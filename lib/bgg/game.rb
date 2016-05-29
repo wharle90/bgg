@@ -45,14 +45,20 @@ module Bgg
 
     def player_count_votes
       @player_count_votes ||= begin
-                                extract_votes = -> (label) { result['result'].find { |r| r['value'] == label }['numvotes'].to_i }
+                                extract_votes = -> (result, label) {
+                                  result['result'].find do |r|
+                                    r['value'] == label
+                                  end['numvotes'].to_i
+                                }
 
                                 suggested_numplayers['results'].reduce({}) do |memo, result|
+                                  # TODO: @jbodah 2016-05-29: handle games with no votes better
+                                  next unless result['result']
                                   player_count = result['numplayers']
                                   memo[player_count] = {
-                                    best:             extract_votes.('Best'),
-                                    recommended:      extract_votes.('Recommended'),
-                                    not_recommended:  extract_votes.('Not Recommended')
+                                    best:             extract_votes.(result, 'Best'),
+                                    recommended:      extract_votes.(result, 'Recommended'),
+                                    not_recommended:  extract_votes.(result, 'Not Recommended')
                                   }
                                   memo
                                 end
