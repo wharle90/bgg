@@ -26,13 +26,20 @@ class BggApi
   OLD_METHODS.each do |method|
     define_singleton_method(method) do |params|
       params ||= {}
+      backoff = params.delete(:backoff)
+      sleep backoff if backoff
 
       url = BASE_URI + '/' + method.to_s
       response = self.get(url, :query => params)
 
-      if response.code == 200
+      case response.code
+      when (200..299)
         xml_data = response.body
         XmlSimple.xml_in(xml_data)
+      when 503
+        # NOTE: @jbodah 2016-05-29: exponential backoff
+        params.merge!({ backoff: Bgg::Request::BackoffStrategy.next(backoff) })
+        singleton_method(method).call(params)
       else
         raise "Received a #{response.code} at #{url} with #{params}"
       end
@@ -56,6 +63,7 @@ require 'bgg/request/hot'
 require 'bgg/request/plays'
 require 'bgg/request/search'
 require 'bgg/request/user'
+require 'bgg/request/backoff_strategy'
 
 require 'bgg/result/item'
 require 'bgg/result/enumerable'
