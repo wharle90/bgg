@@ -31,6 +31,39 @@ module Bgg
       @year_published = game_data['yearpublished'][0]['value'].to_i
     end
 
+    def best_with
+      player_count_votes.select do |player_count, votes|
+        votes[:best] > votes[:recommended] + votes[:not_recommended]
+      end.map(&:first)
+    end
+
+    def recommended_with
+      player_count_votes.select do |player_count, votes|
+        votes[:best] + votes[:recommended] > votes[:not_recommended]
+      end.map(&:first)
+    end
+
+    def player_count_votes
+      @player_count_votes ||= begin
+                                extract_votes = -> (label) { result['result'].find { |r| r['value'] == label }['numvotes'].to_i }
+
+                                suggested_numplayers['results'].reduce({}) do |memo, result|
+                                  player_count = result['numplayers']
+                                  memo[player_count] = {
+                                    best:             extract_votes.('Best'),
+                                    recommended:      extract_votes.('Recommended'),
+                                    not_recommended:  extract_votes.('Not Recommended')
+                                  }
+                                  memo
+                                end
+                              end
+    end
+
+    def suggested_numplayers
+      @suggested_numplayers ||=
+        @game_data['poll'].find { |poll| poll['name'] == 'suggested_numplayers' }
+    end
+
     def self.find_by_id(game_id)
       game_id = Integer(game_id)
       if game_id < 1
