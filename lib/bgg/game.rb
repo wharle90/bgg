@@ -48,53 +48,92 @@ module Bgg
       @year_published = game_data['yearpublished'][0]['value'].to_i
     end
 
+    %i(one two three four five six seven eight nine ten).each_with_index do |word, i|
+      i += 1
+      define_method "best_with_#{word}?", proc { best_with.include? i.to_s }
+      define_method "recommended_with_#{word}?", proc { recommended_with.include? i.to_s }
+    end
+
     def best_with
-      player_count_votes.select do |player_count, votes|
-        votes[:best] > votes[:recommended] + votes[:not_recommended]
-      end.map(&:first)
+      @best_with ||=
+        player_count_votes.select do |player_count, votes|
+          votes[:best] > votes[:recommended] + votes[:not_recommended]
+        end.map(&:first)
     end
 
     def recommended_with
-      player_count_votes.select do |player_count, votes|
-        votes[:best] + votes[:recommended] > votes[:not_recommended]
-      end.map(&:first)
+      @recommended_with ||=
+        player_count_votes.select do |player_count, votes|
+          votes[:best] + votes[:recommended] > votes[:not_recommended]
+        end.map(&:first)
     end
 
     def player_count_votes
-      @player_count_votes ||= begin
-                                extract_votes = -> (result, label) {
-                                  result['result'].find do |r|
-                                    r['value'] == label
-                                  end['numvotes'].to_i
-                                }
+      @player_count_votes ||=
+        begin
+          extract_votes = -> (result, label) {
+            result['result'].find do |r|
+              r['value'] == label
+            end['numvotes'].to_i
+          }
 
-                                suggested_numplayers['results'].reduce({}) do |memo, result|
-                                  # TODO: @jbodah 2016-05-29: handle games with no votes better
-                                  next unless result['result']
-                                  player_count = result['numplayers']
-                                  memo[player_count] = {
-                                    best:             extract_votes.(result, 'Best'),
-                                    recommended:      extract_votes.(result, 'Recommended'),
-                                    not_recommended:  extract_votes.(result, 'Not Recommended')
-                                  }
-                                  memo
-                                end
-                              end
+          suggested_numplayers['results'].reduce({}) do |memo, result|
+            # TODO: @jbodah 2016-05-29: handle games with no votes better
+            next memo unless result['result']
+            player_count = result['numplayers']
+            memo[player_count] = {
+              best:             extract_votes.(result, 'Best'),
+              recommended:      extract_votes.(result, 'Recommended'),
+              not_recommended:  extract_votes.(result, 'Not Recommended')
+            }
+            memo
+          end
+        end
     end
+
+    def rating
+      @rating ||= ratings['average'].first['value'].to_f
+    end
+
+    def weight
+      @weight ||= ratings['averageweight'].first['value'].to_f
+    end
+
+    def light?
+      weight < 2
+    end
+
+    def medium?
+      weight >= 2 && weight < 3
+    end
+
+    def heavy?
+      weight >= 3
+    end
+
+    def length
+      @length ||= @game_data['playingtime'].first['value'].to_i
+    end
+
+    private
 
     def suggested_numplayers
       @suggested_numplayers ||=
         @game_data['poll'].find { |poll| poll['name'] == 'suggested_numplayers' }
     end
 
+    def stats
+      @game_data['statistics']
     end
 
-    private
+    def ratings
+      @ratings ||= stats.find { |h|  h['ratings'] }['ratings'].first
+    end
 
     def filter_links_for(key)
       @game_data['link'].
-        find_all{ |l| l.fetch('type', '') == key }.
-        map{ |l| l['value'] }
+        find_all { |l| l.fetch('type', '') == key }.
+        map { |l| l['value'] }
     end
   end
 end
