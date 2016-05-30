@@ -8,12 +8,12 @@ module Bgg
                 :year_published, :game_data
 
     class << self
-      def find_batch_by_ids(game_ids, stats: false)
+      def find_batch_by_ids(game_ids, stats: 0)
         game_ids = game_ids.map { |id| Integer(id) }
 
         raise ArgumentError.new('game_ids must be greater than 0!') if game_ids.any? { |id| id < 1 }
 
-        game_data = BggApi.thing id: game_ids.join(','), stats: stats ? 1 : 0
+        game_data = BggApi.thing id: game_ids.join(','), stats: stats
 
         raise ArgumentError.new('Games do not exist') unless game_data.has_key?('item')
 

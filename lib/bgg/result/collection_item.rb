@@ -47,9 +47,25 @@ module Bgg
           @want_to_play
         end
 
+        def rated?
+          !!@user_rating
+        end
+
         def game
-          #TODO refactor once Things have been coverted
-          Bgg::Game.find_by_id(self.id)
+          @game
+        end
+
+        def game=(g)
+          @game = g
+        end
+
+        def inspect
+          "\"#{@name}\""
+        end
+
+        def method_missing(sym, *args, &block)
+          return @game.public_send(sym, *args, &block) if @game && @game.respond_to?(sym)
+          super
         end
 
         private
