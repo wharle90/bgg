@@ -126,6 +126,22 @@ module Bgg
       @length ||= @game_data['playingtime'].first['value'].to_i
     end
 
+    %i(trading owned wanting wishing).each do |sym|
+      eval <<-EOF
+        def count_#{sym}
+          @count_#{sym} ||= ratings['#{sym}'].first['value']
+        end
+      EOF
+    end
+
+    def expansion?
+      @game_data['type'] == 'boardgameexpansion'
+    end
+
+    def board_game?
+      !!expansion?
+    end
+
     private
 
     def suggested_numplayers
