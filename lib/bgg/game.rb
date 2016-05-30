@@ -7,6 +7,23 @@ module Bgg
                 :recommended_minimum_age, :thumbnail,
                 :year_published, :game_data
 
+    def self.find_by_id(game_id, stats: false)
+      game_id = Integer(game_id)
+
+      raise ArgumentError.new('game_id must be greater than 0!') if game_id < 1
+
+      game_data = BggApi.thing({
+        id: game_id,
+        stats: stats ? 1 : 0
+      })
+
+      raise ArgumentError.new('Game does not exist') unless game_data.has_key?('item')
+
+      game_data = game_data['item'][0]
+
+      Game.new(game_data)
+    end
+
     def initialize(game_data)
       @game_data = game_data
 
@@ -70,19 +87,6 @@ module Bgg
         @game_data['poll'].find { |poll| poll['name'] == 'suggested_numplayers' }
     end
 
-    def self.find_by_id(game_id)
-      game_id = Integer(game_id)
-      if game_id < 1
-        raise ArgumentError.new('game_id must be greater than 0!')
-      end
-
-      game_data = BggApi.thing({id: game_id, type: 'boardgame'})
-      unless game_data.has_key?('item')
-        raise ArgumentError.new('Game does not exist')
-      end
-      game_data = game_data['item'][0]
-
-      Game.new(game_data)
     end
 
     private
