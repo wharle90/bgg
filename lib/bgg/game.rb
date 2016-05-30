@@ -7,21 +7,32 @@ module Bgg
                 :recommended_minimum_age, :thumbnail,
                 :year_published, :game_data
 
-    def self.find_by_id(game_id, stats: false)
-      game_id = Integer(game_id)
+    class << self
+      def find_batch_by_ids(game_ids, stats: false)
+        game_ids = game_ids.map { |id| Integer(id) }
 
-      raise ArgumentError.new('game_id must be greater than 0!') if game_id < 1
+        raise ArgumentError.new('game_ids must be greater than 0!') if game_ids.any? { |id| id < 1 }
 
-      game_data = BggApi.thing({
-        id: game_id,
-        stats: stats ? 1 : 0
-      })
+        game_data = BggApi.thing id: game_ids.join(','), stats: stats ? 1 : 0
 
-      raise ArgumentError.new('Game does not exist') unless game_data.has_key?('item')
+        raise ArgumentError.new('Games do not exist') unless game_data.has_key?('item')
 
-      game_data = game_data['item'][0]
+        game_data['item'].map { |game| Game.new(game) }
+      end
 
-      Game.new(game_data)
+      def find_by_id(game_id, stats: false)
+        game_id = Integer(game_id)
+
+        raise ArgumentError.new('game_id must be greater than 0!') if game_id < 1
+
+        game_data = BggApi.thing id: game_id, stats: stats ? 1 : 0
+
+        raise ArgumentError.new('Game does not exist') unless game_data.has_key?('item')
+
+        game_data = game_data['item'][0]
+
+        Game.new(game_data)
+      end
     end
 
     def initialize(game_data)
