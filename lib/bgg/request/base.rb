@@ -1,11 +1,14 @@
 require 'httparty'
 require 'nokogiri'
 require 'bgg/request/backoff_strategy'
+require 'bgg/cache'
 
 module Bgg
   module Request
     class Base
       include HTTParty
+      extend Bgg::Request::BackoffStrategy::Middleware
+      extend Bgg::Cache::Middleware
 
       attr_reader :params
 
@@ -32,9 +35,7 @@ module Bgg
         @params = params
       end
 
-      def get(backoff = nil)
-        sleep backoff if backoff
-
+      def get
         url = BASE_URI + '/' + @method.to_s
         response = self.class.get url, query: @params
 
@@ -42,9 +43,6 @@ module Bgg
         when (200..299)
           xml_result = Nokogiri.XML response.body
           Object.const_get("Bgg").const_get("Result").const_get(@method.to_s.capitalize).new xml_result, self
-        when 503
-          # NOTE: @jbodah 2016-05-29: exponential backoff
-          get Bgg::Request::BackoffStrategy.next(backoff)
         else
           raise "Received a #{response.code} at #{url} with #{@params}"
         end
