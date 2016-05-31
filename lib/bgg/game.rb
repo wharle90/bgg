@@ -110,17 +110,19 @@ module Bgg
       @weight ||= ratings['averageweight'].first['value'].to_f
     end
 
-    def light?
-      weight < 2
-    end
+    def very_light?;  weight > 0 && weight < 1.4;     end
+    def light?;       weight >= 1.4 && weight < 2.3;  end
+    def medium?;      weight >= 2.3 && weight < 3;    end
+    def heavy?;       weight >= 3;                    end
+    def very_heavy?;  weight >= 3.5;                  end
 
-    def medium?
-      weight >= 2 && weight < 3
-    end
-
-    def heavy?
-      weight >= 3
-    end
+    def very_short?;      length <= 30;   end
+    def short?;           length <= 45;   end
+    def under_an_hour?;   length <= 60;   end
+    def average?;         length <= 90;   end
+    def under_two_hours?; length <= 120;  end
+    def long?;            length >= 120;  end
+    def very_long?;       length >= 180;  end
 
     def length
       @length ||= @game_data['playingtime'].first['value'].to_i
@@ -139,7 +141,7 @@ module Bgg
     end
 
     def board_game?
-      !!expansion?
+      !expansion?
     end
 
     private

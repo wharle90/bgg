@@ -47,8 +47,39 @@ module Bgg
           @want_to_play
         end
 
+        def perfect?;   @user_rating >= 10; end
+        def favorite?;  @user_rating >= 9;  end
+        def great?;     @user_rating >= 8;  end
+        def good?;      @user_rating >= 7;  end
+        def okay?;      @user_rating >= 6;  end
+        def bad?;       @user_rating <= 6;  end
+
+        %i(josh lauren).each do |person|
+          eval <<-EOF
+            def #{person}_rated?
+              return false if comment.nil?
+              !!comment[/(?<=#{person.capitalize} )\\d[^\\/]*/]
+            end
+
+            def #{person}_rating
+              comment[/(?<=#{person.capitalize} )\\d[^\\/]*/].to_f * 2
+            end
+
+            def #{person}_perfect?;   #{person}_rating >= 10; end
+            def #{person}_favorite?;  #{person}_rating >= 9;  end
+            def #{person}_great?;     #{person}_rating >= 8;  end
+            def #{person}_good?;      #{person}_rating >= 7;  end
+            def #{person}_okay?;      #{person}_rating >= 6;  end
+            def #{person}_bad?;       #{person}_rating <= 6;  end
+          EOF
+        end
+
         def rated?
           !!@user_rating
+        end
+
+        def unplayed?
+          !rated?
         end
 
         def game
@@ -60,7 +91,7 @@ module Bgg
         end
 
         def inspect
-          "\"#{@name}\""
+          ENV['SHORT_INSPECT'] ? "\"#{@name}\"" : super
         end
 
         def method_missing(sym, *args, &block)
