@@ -1,7 +1,7 @@
 bgg gem [![Build Status](https://travis-ci.org/jemiahlee/bgg.svg)](https://travis-ci.org/jemiahlee/bgg) [![Code Climate](https://codeclimate.com/github/jemiahlee/bgg.png)](https://codeclimate.com/github/jemiahlee/bgg)
 ===========
 
-An object-oriented API for interacting with the [boardgamegeek](http://boardgamegeek.com) [XML Version 2 API](http://boardgamegeek.com/wiki/page/BGG_XML_API2).
+An object-oriented API for interacting with the [boardgamegeek](https://boardgamegeek.com) [XML Version 2 API](https://boardgamegeek.com/wiki/page/BGG_XML_API2).
 
 This is based on a fork of earlier work I had done on
 [bgg-api](http://github.com/bhardin/bgg-api), along with Brett and a few
@@ -36,7 +36,7 @@ You can either use the low level basic api and then parse the XML document in a 
 or you can use the specialized methods
 
 There are object types and subtypes for many of the APIs documented at
-[BGG_XML_API2](http://boardgamegeek.com/wiki/page/BGG_XML_API2), but not all of them are implemented.
+[BGG_XML_API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2), but not all of them are implemented.
 Everything around a user and their game collection should work, as well
 as generalized searching for board games.
 

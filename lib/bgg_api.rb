@@ -25,7 +25,7 @@ class BggApi
     :user
   ].freeze
 
-  BASE_URI = 'http://www.boardgamegeek.com/xmlapi2'
+  BASE_URI = 'https://www.boardgamegeek.com/xmlapi2'
 
   OLD_METHODS.each do |method|
     define_singleton_method(method) do |params = {}|
@@ -79,4 +79,3 @@ require 'bgg/result/user'
 require 'bgg/game'
 require 'bgg/logger'
 require 'bgg/cache'
-
